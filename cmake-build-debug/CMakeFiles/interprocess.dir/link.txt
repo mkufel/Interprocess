@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/interprocess.dir/farmer.c.o CMakeFiles/interprocess.dir/md5s.c.o CMakeFiles/interprocess.dir/md5s_main.c.o CMakeFiles/interprocess.dir/worker.c.o  -o interprocess 

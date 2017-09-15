@@ -144,53 +144,47 @@ message_queue_test (void)
 
 
     for (int i = 0; i < NROF_WORKERS; ++i) {
-        process_test();
-    }
-    processID = getpid();
-    printf("pid cosidered in the if: %d\n", processID);
-    if (processID < 0)
-    {
-        perror("fork() failed");
-        exit (1);
-    }
-    else
-    {
-        if (processID == 0)
-        {
-            // child-stuff
-            printf("Process id = 0, call the message_queue_child");
-            message_queue_child ();
-            exit (0);
-        }
-        else
-        {
-            printf("Process id != 0, do the parent stuff");
-            // remaining of the parent stuff
-            // fill request message
-            req.md5[0] = 'a';
-            req.startingPoint = 'b';
 
-            sleep (3);
-            // send the request
-            printf ("parent: sending...\n");
-            mq_send (mq_fd_request, (char *) &req, sizeof (req), 0);
+        processID = fork();
 
-            sleep (3);
-            // read the result and store it in the response message
-            printf ("parent: receiving...\n");
-            mq_receive (mq_fd_response, (char *) &rsp, sizeof (rsp), NULL);
+        if (processID < 0) {
+            perror("fork() failed");
+            exit(1);
+        } else {
+            if (processID == 0) {
+                // child-stuff
+                printf("Process id = 0, call the message_queue_child");
+                message_queue_child();
+                exit(0);
+            } else {
+                printf("Process id != 0, do the parent stuff");
+                // remaining of the parent stuff
+                // fill request message
+                req.md5[0] = 'a';
+                req.startingPoint = 'b';
 
-            sleep (3);
-            printf ("parent: received: %c, %c \n", rsp.hashedValue[0], rsp.md5[0]);
+                sleep(3);
+                // send the request
+                printf("parent: sending...\n");
+                mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
 
-            sleep (1);
+                sleep(3);
+                // read the result and store it in the response message
+                printf("parent: receiving...\n");
+                mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
 
-            waitpid (processID, NULL, 0);   // wait for the child
+                sleep(3);
+                printf("parent: received: %c, %c \n", rsp.hashedValue[0], rsp.md5[0]);
 
-            mq_close (mq_fd_response);
-            mq_close (mq_fd_request);
-            mq_unlink (mq_name1);
-            mq_unlink (mq_name2);
+                sleep(1);
+
+                waitpid(processID, NULL, 0);   // wait for the child
+
+                mq_close(mq_fd_response);
+                mq_close(mq_fd_request);
+                mq_unlink(mq_name1);
+                mq_unlink(mq_name2);
+            }
         }
     }
 }

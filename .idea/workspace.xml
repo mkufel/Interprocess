@@ -12,10 +12,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f408931-596b-43b4-80ae-962e42b4eca8" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/farmer" afterPath="$PROJECT_DIR$/farmer" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/common.h" afterPath="$PROJECT_DIR$/common.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/farmer.c" afterPath="$PROJECT_DIR$/farmer.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings.h" afterPath="$PROJECT_DIR$/settings.h" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -60,8 +59,8 @@
       <file leaf-file-name="farmer.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/farmer.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="678">
-              <caret line="151" column="36" lean-forward="false" selection-start-line="151" selection-start-column="36" selection-end-line="151" selection-end-column="36" />
+            <state relative-caret-position="396">
+              <caret line="153" column="17" lean-forward="true" selection-start-line="153" selection-start-column="17" selection-end-line="153" selection-end-column="17" />
               <folding>
                 <element signature="e#473#491#0" expanded="true" />
               </folding>
@@ -73,7 +72,7 @@
         <entry file="file://$PROJECT_DIR$/settings.h">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="162">
-              <caret line="9" column="29" lean-forward="true" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="29" />
+              <caret line="9" column="29" lean-forward="false" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -83,7 +82,7 @@
         <entry file="file:///usr/include/x86_64-linux-gnu/bits/mqueue.h">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="504">
-              <caret line="28" column="24" lean-forward="true" selection-start-line="28" selection-start-column="24" selection-end-line="28" selection-end-column="24" />
+              <caret line="28" column="24" lean-forward="false" selection-start-line="28" selection-start-column="24" selection-end-line="28" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -122,8 +121,8 @@
       <file leaf-file-name="interprocess_basics.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/interprocess_basics.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="789">
-              <caret line="96" column="4" lean-forward="true" selection-start-line="96" selection-start-column="4" selection-end-line="96" selection-end-column="4" />
+            <state relative-caret-position="627">
+              <caret line="88" column="1" lean-forward="true" selection-start-line="59" selection-start-column="0" selection-end-line="88" selection-end-column="1" />
               <folding>
                 <element signature="e#775#793#0" expanded="true" />
               </folding>
@@ -147,8 +146,8 @@
       <list>
         <option value="$PROJECT_DIR$/settings.h" />
         <option value="$PROJECT_DIR$/interprocess_basics.c" />
-        <option value="$PROJECT_DIR$/farmer.c" />
         <option value="$PROJECT_DIR$/common.h" />
+        <option value="$PROJECT_DIR$/farmer.c" />
       </list>
     </option>
   </component>
@@ -233,12 +232,12 @@
       <updated>1505229326789</updated>
       <workItem from="1505229329496" duration="512000" />
       <workItem from="1505375225984" duration="2194000" />
-      <workItem from="1505390872444" duration="9681000" />
+      <workItem from="1505390872444" duration="13891000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12387000" />
+    <option name="totallyTimeSpent" value="16597000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="387" y="44" width="1857" height="995" extended-state="6" />
@@ -466,7 +465,7 @@
     <entry file="file:///usr/include/x86_64-linux-gnu/bits/mqueue.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="504">
-          <caret line="28" column="24" lean-forward="true" selection-start-line="28" selection-start-column="24" selection-end-line="28" selection-end-column="24" />
+          <caret line="28" column="24" lean-forward="false" selection-start-line="28" selection-start-column="24" selection-end-line="28" selection-end-column="24" />
           <folding />
         </state>
       </provider>
@@ -495,28 +494,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/settings.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" column="29" lean-forward="false" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/interprocess_basics.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="789">
-          <caret line="96" column="4" lean-forward="true" selection-start-line="96" selection-start-column="4" selection-end-line="96" selection-end-column="4" />
+        <state relative-caret-position="627">
+          <caret line="88" column="1" lean-forward="true" selection-start-line="59" selection-start-column="0" selection-end-line="88" selection-end-column="1" />
           <folding>
             <element signature="e#775#793#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/settings.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="9" column="29" lean-forward="true" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/farmer.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="678">
-          <caret line="151" column="36" lean-forward="false" selection-start-line="151" selection-start-column="36" selection-end-line="151" selection-end-column="36" />
+        <state relative-caret-position="396">
+          <caret line="153" column="17" lean-forward="true" selection-start-line="153" selection-start-column="17" selection-end-line="153" selection-end-column="17" />
           <folding>
             <element signature="e#473#491#0" expanded="true" />
           </folding>

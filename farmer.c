@@ -22,9 +22,10 @@
 #include <errno.h>
 #include <unistd.h>         // for execlp
 #include <mqueue.h>         // for mq
-
 #include "settings.h"
 #include "common.h"
+#include "md5s.h"
+
 
 //static void
 //getattr (mqd_t mq_fd)
@@ -50,8 +51,8 @@ message_queue_child (void)
     MQ_REQUEST_MESSAGE  req;
     MQ_RESPONSE_MESSAGE rsp;
 //    struct mq_attr      attr;
-
-
+//    char * z = 's';
+//    uint128_t s = md5s(* z, 1);
     mq_fd_request = mq_open (mq_name1, O_RDONLY);
     mq_fd_response = mq_open (mq_name2, O_WRONLY);
 
@@ -118,6 +119,25 @@ process_test (void)
     }
 }
 
+int create_childen(int number_of_children) {
+
+    for (int i = 0; i < number_of_children; i++ ) {
+        pid_t pid;
+
+        printf("Creating a child for the process: %d\n", getpid());
+        pid = fork();
+
+        if (pid < 0){
+            return -1;
+        }
+
+        if (pid == 0) {
+            printf("Child process: %d, loading a worker job\n ", getpid());
+            execlp("./worker", "worker", mq_name1, mq_name2, NULL);
+        }
+    }
+}
+
 static void
 message_queue_test (void)
 {
@@ -143,50 +163,50 @@ message_queue_test (void)
     mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL, 0600, &attr);
 
 
-    for (int i = 0; i < NROF_WORKERS; ++i) {
+    processID = create_childen(NROF_WORKERS);
+    printf("Process ID after children creation: %d\n", processID);
 
-        processID = fork();
-
-        if (processID < 0) {
-            perror("fork() failed");
-            exit(1);
+    if (processID < 0) {
+        perror("fork() failed");
+        exit(1);
+    } else {
+        if (processID == 0) { //this won't be called
+            // child-stuff
+            printf("Call the message_queue_child, id: %d\n", getpid());
+            message_queue_child();
+            exit(0);
         } else {
-            if (processID == 0) {
-                // child-stuff
-                printf("Process id = 0, call the message_queue_child");
-                message_queue_child();
-                exit(0);
-            } else {
-                printf("Process id != 0, do the parent stuff");
-                // remaining of the parent stuff
-                // fill request message
-                req.md5[0] = 'a';
-                req.startingPoint = 'b';
 
-                sleep(3);
-                // send the request
-                printf("parent: sending...\n");
-                mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
+            printf("Process id %d, doing the parent stuff\n", getpid());
+            // remaining of the parent stuff
+            // fill request message
+            req.md5[0] = 'a';
+            req.startingPoint = 'b';
 
-                sleep(3);
-                // read the result and store it in the response message
-                printf("parent: receiving...\n");
-                mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
+            sleep(3);
+            // send the request
+            printf("parent: sending...\n");
+            mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
 
-                sleep(3);
-                printf("parent: received: %c, %c \n", rsp.hashedValue[0], rsp.md5[0]);
+            sleep(3);
+            // read the result and store it in the response message
+            printf("parent: receiving...\n");
+            mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
 
-                sleep(1);
+            sleep(3);
+            printf("parent: received: %c, %c \n", rsp.hashedValue[0], rsp.md5[0]);
 
-                waitpid(processID, NULL, 0);   // wait for the child
+            sleep(1);
 
-                mq_close(mq_fd_response);
-                mq_close(mq_fd_request);
-                mq_unlink(mq_name1);
-                mq_unlink(mq_name2);
+            waitpid(processID, NULL, 0);   // wait for the child
+
+            mq_close(mq_fd_response);
+            mq_close(mq_fd_request);
+            mq_unlink(mq_name1);
+            mq_unlink(mq_name2);
             }
         }
-    }
+
 }
 
 int main (int argc, char * argv[])

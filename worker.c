@@ -22,14 +22,17 @@
 #include <time.h>           // for time()
 #include <complex.h>
 
-#include "common.h"
-#include "md5s.h"
+//#include "common.h"
+//#include "md5s.h"
 
-static void rsleep (int t);
+//static void rsleep (int t);
 
 
 int main (int argc, char * argv[])
 {
+
+    printf("Child process %d working: \n", getpid());
+
     // TODO:
     // (see message_queue_test() in interprocess_basic.c)
     //  * open the two message queues (whose names are provided in the arguments)
@@ -51,16 +54,16 @@ int main (int argc, char * argv[])
  * between 0 and t microseconds
  * At the first call, the random generator is seeded with the current time
  */
-static void rsleep (int t)
-{
-    static bool first_call = true;
-    
-    if (first_call == true)
-    {
-        srandom (time (NULL) % getpid ());
-        first_call = false;
-    }
-    usleep (random() % t);
-}
+//static void rsleep (int t)
+//{
+//    static bool first_call = true;
+//
+//    if (first_call == true)
+//    {
+//        srandom (time (NULL) % getpid ());
+//        first_call = false;
+//    }
+//    usleep (random() % t);
+//}
 
 

@@ -162,11 +162,11 @@ message_queue_test (void)
     sprintf (mq_name1, "/mq_request_%s_%d", STUDENT_NAME, getpid());
     sprintf (mq_name2, "/mq_response_%s_%d", STUDENT_NAME, getpid());
 
-    attr.mq_maxmsg  = 10;
+    attr.mq_maxmsg  = MAX_MESSAGE_LENGTH;
     attr.mq_msgsize = sizeof (MQ_REQUEST_MESSAGE);
     mq_fd_request = mq_open (mq_name1, O_WRONLY | O_CREAT | O_EXCL, 0600, &attr);
 
-    attr.mq_maxmsg  = 10;
+    attr.mq_maxmsg  = MAX_MESSAGE_LENGTH;
     attr.mq_msgsize = sizeof (MQ_RESPONSE_MESSAGE);
     mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL, 0600, &attr);
 

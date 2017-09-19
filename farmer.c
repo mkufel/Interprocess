@@ -3,7 +3,7 @@
  * Interprocess Communication
  *
  * Maciek Kufel
- * STUDENT_NAME_2 (STUDENT_NR_2)
+ * Ahmed Ahres
  *
  * Grading:
  * Students who hand in clean code that fully satisfies the minimum requirements will get an 8.
@@ -27,102 +27,60 @@
 #include "md5s.h"
 
 
-//static void
-//getattr (mqd_t mq_fd)
-//{
-//    struct mq_attr      attr;
-//    int                 rtnval;
-//
-//    rtnval = mq_getattr (mq_fd, &attr);
-//    if (rtnval == -1)
-//    {
-//        perror ("mq_getattr() failed");
-//        exit (1);
-//    }
-//    fprintf (stderr, "%d: mqdes=%d max=%ld size=%ld nrof=%ld\n",
-//             getpid(),
-//             mq_fd, attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
-//}
-static void
-message_queue_child (void)
-{
-    mqd_t               mq_fd_request;
-    mqd_t               mq_fd_response;
-    MQ_REQUEST_MESSAGE  req;
-    MQ_RESPONSE_MESSAGE rsp;
-//    struct mq_attr      attr;
-//    char * z = 's';
-//    uint128_t s = md5s(* z, 1);
-    mq_fd_request = mq_open (mq_name1, O_RDONLY);
-    mq_fd_response = mq_open (mq_name2, O_WRONLY);
-
-//    attr.mq_maxmsg  = 10;
-//    attr.mq_msgsize = sizeof (MQ_REQUEST_MESSAGE);
-//    mq_fd_request = mq_open (mq_name1, O_WRONLY | O_CREAT | O_EXCL, 0600, &attr);
-//
-//    attr.mq_maxmsg  = 10;
-//    attr.mq_msgsize = sizeof (MQ_RESPONSE_MESSAGE);
-//    mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL, 0600, &attr);
-
-
-
-    // read the message queue and store it in the request message
-    printf ("                                   child: receiving...\n");
-    mq_receive (mq_fd_request, (char *) &req, sizeof (req), NULL);
-    sleep (5);
-
-    printf ("                                   child: received: %c, %c\n",
-            req.md5[0], req.startingPoint);
-
-    // fill response message
-    // e   contains the length of f[]
-    // f[] contains characters abcd
-    // g[] contains characters ABCDEFGHIJ + \0-terminator (so it is a C-string)
-    rsp.md5[0] = 'z';
-    rsp.hashedValue[0] = 'd';
-
-    sleep (3);
-    // send the response
-    printf ("                                   child: sending...\n");
-    mq_send (mq_fd_response, (char *) &rsp, sizeof (rsp), 0);
-
-    mq_close (mq_fd_response);
-    mq_close (mq_fd_request);
-}
-
 
 static void
-process_test (void)
+getattr (mqd_t mq_fd)
 {
-    pid_t processID;      /* Process ID from fork() */
-    printf ("Parent id: %d\n", getpid());
+    struct mq_attr      attr;
+    int                 rtnval;
 
-    processID = fork();
-    if (processID < 0)
+    rtnval = mq_getattr (mq_fd, &attr);
+    if (rtnval == -1)
     {
-        perror("fork() failed");
+        perror ("mq_getattr() failed");
         exit (1);
     }
-    else
-    {
-        if (processID == 0)
-        {
-            printf ("Child  pid:%d\n", getpid());
-            // or try this one:
-            //execlp ("./interprocess_basics", "my_own_name_for_argv0", "first_argument", NULL);
-            message_queue_child();
-        }
-        // else: we are still the parent (which continues this program)
-
-        waitpid (processID, NULL, 0);   // wait for the child
-        printf ("child %d has been finished\n\n", processID);
-    }
+    fprintf (stderr, "%d: mqdes=%d max=%ld size=%ld nrof=%ld\n",
+             getpid(),
+             mq_fd, attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
 }
 
-int create_childen(int number_of_children) {
 
-    for (int i = 0; i < number_of_children; i++ ) {
-        pid_t pid;
+//static void
+//process_test (void)
+//{
+//    pid_t processID;      /* Process ID from fork() */
+//    printf ("Parent id: %d\n", getpid());
+//
+//    processID = fork();
+//    if (processID < 0)
+//    {
+//        perror("fork() failed");
+//        exit (1);
+//    }
+//    else
+//    {
+//        if (processID == 0)
+//        {
+//            printf ("Child  pid:%d\n", getpid());
+//            // or try this one:
+//            //execlp ("./interprocess_basics", "my_own_name_for_argv0", "first_argument", NULL);
+//            message_queue_child();
+//        }
+//        // else: we are still the parent (which continues this program)
+//
+//        waitpid (processID, NULL, 0);   // wait for the child
+//        printf ("child %d has been finished\n\n", processID);
+//    }
+//}
+
+
+int create_workers(int number_of_workers) {
+
+    pid_t pid = 1; //just initialized as a kernel process
+
+    for (int i = 0; i < number_of_workers; i++ ) {
+
 
         printf("Creating a child for the process: %d\n", getpid());
         pid = fork();
@@ -136,7 +94,8 @@ int create_childen(int number_of_children) {
             execlp("./worker", "worker", mq_name1, mq_name2, NULL);
         }
     }
-}
+    return pid;
+}   
 
 static void
 message_queue_test (void)
@@ -163,7 +122,7 @@ message_queue_test (void)
     mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL, 0600, &attr);
 
 
-    processID = create_childen(NROF_WORKERS);
+    processID = create_workers(NROF_WORKERS);
     printf("Process ID after children creation: %d\n", processID);
 
     if (processID < 0) {
@@ -173,7 +132,7 @@ message_queue_test (void)
         if (processID == 0) { //this won't be called
             // child-stuff
             printf("Call the message_queue_child, id: %d\n", getpid());
-            message_queue_child();
+//            message_queue_child();
             exit(0);
         } else {
 
@@ -186,8 +145,11 @@ message_queue_test (void)
             sleep(3);
             // send the request
             printf("parent: sending...\n");
-            mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
+            int sendResult = mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
 
+            if (sendResult == -1) {
+                printf("Error in sending");
+            }
             sleep(3);
             // read the result and store it in the response message
             printf("parent: receiving...\n");

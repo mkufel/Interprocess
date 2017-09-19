@@ -16,7 +16,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
- 
+#include "md5s.h"
+
 typedef union uwb {
     unsigned w;
     unsigned char b[4];
@@ -196,9 +197,7 @@ md5s (const char * msg, int mlen)
     }
 	return (rtnval);
 }
-
-#ifdef _2INC0_STAND_ALONE_
-
+/*
 int main( int argc, char *argv[] )
 {
     int j,k;
@@ -220,7 +219,7 @@ int main( int argc, char *argv[] )
     printf("\n\t MD5 Encyption Successfully Completed!!!\n\n");
     return 0;
 }
+ */
 
-#endif
 
 

@@ -30,7 +30,7 @@ typedef struct
 {
     // a data structure with 2 members
     char    hashedValue[32];
-    char    md5[32];
+    uint128_t result;
 } MQ_RESPONSE_MESSAGE;
 
 #endif

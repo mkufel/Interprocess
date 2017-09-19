@@ -95,92 +95,94 @@ int create_workers(int number_of_workers) {
     return pid;
 }
 
-static void
-message_queue_test (void)
-{
-    pid_t               processID;      /* Process ID from fork() */
-    mqd_t               mq_fd_request;
-    mqd_t               mq_fd_response;
-    MQ_REQUEST_MESSAGE  req;
-    MQ_RESPONSE_MESSAGE rsp;
-    struct mq_attr      attr;
 
-    mq_fd_request = mq_open (mq_name1, O_RDONLY);
-    mq_fd_response = mq_open (mq_name2, O_WRONLY);
-    printf("queue parent: %d\n", mq_fd_response);
+//static void
+//message_queue_test (void)
+//{
+//    pid_t               processID;      /* Process ID from fork() */
+//    mqd_t               mq_fd_request;
+//    mqd_t               mq_fd_response;
+//    MQ_REQUEST_MESSAGE  req;
+//    MQ_RESPONSE_MESSAGE rsp;
+//    struct mq_attr      attr;
+//
+//    mq_fd_request = mq_open (mq_name1, O_RDONLY);
+//    mq_fd_response = mq_open (mq_name2, O_WRONLY);
+//    printf("queue parent: %d\n", mq_fd_response);
+//
+//    printf("1st queue name: %s\n", mq_name1);
+//
+//    printf("2nd queue name: %s\n", mq_name2);
+//
+//    sprintf (mq_name1, "/mq_request_%s_%d", "Maciek Kufel", getpid());
+//
+//    sprintf (mq_name2, "/mq_response_%s_%d", "Ahmed Ahres", getpid());
+//    printf("1st queue name: %s\n", mq_name1);
+//
+//
+//    printf("2nd queue name: %s\n", mq_name2);
+//
+//    attr.mq_maxmsg  = MAX_MESSAGE_LENGTH;
+//    attr.mq_msgsize = sizeof (MQ_REQUEST_MESSAGE);
+//    mq_fd_request = mq_open (mq_name1, O_WRONLY | O_CREAT | O_EXCL, 0600, &attr);
+//
+//    attr.mq_maxmsg  = MAX_MESSAGE_LENGTH;
+//    attr.mq_msgsize = sizeof (MQ_RESPONSE_MESSAGE);
+//    mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL, 0600, &attr);
+//
+//
+//    getattr(mq_fd_request);
+//    getattr(mq_fd_response);
+//
+//    processID = create_workers(NROF_WORKERS);
+//    printf("Process ID after children creation: %d\n", processID);
+//
+//    if (processID < 0) {
+//        perror("fork() failed");
+//        exit(1);
+//    } else {
+//        if (processID == 0) { //this won't be called
+//            // child-stuff
+//            printf("Call the message_queue_child, id: %d\n", getpid());
+////            message_queue_child();
+//            exit(0);
+//        } else {
+//
+//            printf("Process id %d, doing the parent stuff\n", getpid());
+//            // remaining of the parent stuff
+//            // fill request message
+//            req.md5[0] = 'a';
+//            req.startingPoint = 'b';
+//
+//            sleep(3);
+//            // send the request
+//            printf("parent: sending...\n");
+//            int sendResult = mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
+//
+//            if (sendResult == -1) {
+//                printf("Error in sending");
+//            }
+//            sleep(3);
+//            // read the result and store it in the response message
+//            printf("parent: receiving...\n");
+//            mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
+//
+//            sleep(3);
+//            printf("parent: received: %c, %c \n", rsp.hashedValue[0], rsp.md5[0]);
+//
+//            sleep(1);
+//
+//            waitpid(processID, NULL, 0);   // wait for the child
+//
+//            mq_close(mq_fd_response);
+//            mq_close(mq_fd_request);
+//            mq_unlink(mq_name1);
+//            mq_unlink(mq_name2);
+//            }
+//        }
+//
+//}
 
-    printf("1st queue name: %s\n", mq_name1);
-
-    printf("2nd queue name: %s\n", mq_name2);
-
-    sprintf (mq_name1, "/mq_request_%s_%d", "Maciek Kufel", getpid());
-
-    sprintf (mq_name2, "/mq_response_%s_%d", "Ahmed Ahres", getpid());
-    printf("1st queue name: %s\n", mq_name1);
-
-
-    printf("2nd queue name: %s\n", mq_name2);
-
-    attr.mq_maxmsg  = MAX_MESSAGE_LENGTH;
-    attr.mq_msgsize = sizeof (MQ_REQUEST_MESSAGE);
-    mq_fd_request = mq_open (mq_name1, O_WRONLY | O_CREAT | O_EXCL, 0600, &attr);
-
-    attr.mq_maxmsg  = MAX_MESSAGE_LENGTH;
-    attr.mq_msgsize = sizeof (MQ_RESPONSE_MESSAGE);
-    mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL, 0600, &attr);
-
-
-    getattr(mq_fd_request);
-    getattr(mq_fd_response);
-
-    processID = create_workers(NROF_WORKERS);
-    printf("Process ID after children creation: %d\n", processID);
-
-    if (processID < 0) {
-        perror("fork() failed");
-        exit(1);
-    } else {
-        if (processID == 0) { //this won't be called
-            // child-stuff
-            printf("Call the message_queue_child, id: %d\n", getpid());
-//            message_queue_child();
-            exit(0);
-        } else {
-
-            printf("Process id %d, doing the parent stuff\n", getpid());
-            // remaining of the parent stuff
-            // fill request message
-            req.md5[0] = 'a';
-            req.startingPoint = 'b';
-
-            sleep(3);
-            // send the request
-            printf("parent: sending...\n");
-            int sendResult = mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
-
-            if (sendResult == -1) {
-                printf("Error in sending");
-            }
-            sleep(3);
-            // read the result and store it in the response message
-            printf("parent: receiving...\n");
-            mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
-
-            sleep(3);
-            printf("parent: received: %c, %c \n", rsp.hashedValue[0], rsp.md5[0]);
-
-            sleep(1);
-
-            waitpid(processID, NULL, 0);   // wait for the child
-
-            mq_close(mq_fd_response);
-            mq_close(mq_fd_request);
-            mq_unlink(mq_name1);
-            mq_unlink(mq_name2);
-            }
-        }
-
-}
 
 int main (int argc, char * argv[])
 {
@@ -234,7 +236,7 @@ int main (int argc, char * argv[])
         for (int j = 0; j < NROF_WORKERS ; ++j) {
             printf ("parent: receiving...\n");
             mq_receive (mq_fd_response, (char *) &rsp, sizeof (rsp), NULL);
-            printf("parent: received: %c, %c \n", rsp.hashedValue[0], rsp.md5[0]);
+            printf("parent: received: %c, %llx \n", rsp.hashedValue[0], rsp.result);
 
         }
 

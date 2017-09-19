@@ -220,6 +220,7 @@ int main (int argc, char * argv[])
             req.md5 = md5_list[0];
             printf("Passed md5: %llx\n", md5_list[0]);
             req.startingPoint = (char) ('b' + i);
+            printf("Passed startinPoint: %c \n", req.startingPoint);
             sleep(3);
             // send the request
             printf ("parent: sending...\n");

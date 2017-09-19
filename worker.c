@@ -91,8 +91,11 @@ int main (int argc, char * argv[])
     printf ("                                   child: receiving...\n");
     mq_receive (mq_fd_request, (char *) &req, sizeof(req), NULL);
     rsleep(10000);
-    printf ("                                   child: received: %llx, %c \n",
-            req.md5, req.startingPoint);
+    printf ("                                   child: received: %ju \n",
+            req.md5);
+
+    printf("                                    and starting point %c \n",
+           req.startingPoint);
 
     rsp.result = md5s(req.md5, 1);
     rsp.hashedValue[0] = 'd';

@@ -81,8 +81,6 @@ int create_workers(int number_of_workers) {
 
     for (int i = 0; i < number_of_workers; i++ ) {
 
-
-        printf("Creating a child for the process: %d\n", getpid());
         pid = fork();
 
         if (pid < 0){
@@ -90,12 +88,12 @@ int create_workers(int number_of_workers) {
         }
 
         if (pid == 0) {
-            printf("Child process: %d, loading a worker job\n ", getpid());
+//            printf("Child process: %d, loading a worker job\n ", getpid());
             execlp("./worker", "worker", mq_name1, mq_name2, NULL);
         }
     }
     return pid;
-}   
+}
 
 static void
 message_queue_test (void)
@@ -110,17 +108,29 @@ message_queue_test (void)
     mq_fd_request = mq_open (mq_name1, O_RDONLY);
     mq_fd_response = mq_open (mq_name2, O_WRONLY);
 
-    sprintf (mq_name1, "/mq_request_%s_%d", "Maciek Kufel", getpid());
-    sprintf (mq_name2, "/mq_response_%s_%d", "Ahmed Ahres", getpid());
+    printf("1st queue name: %s\n", mq_name1);
 
-    attr.mq_maxmsg  = 10;
+    printf("2nd queue name: %s\n", mq_name2);
+
+    sprintf (mq_name1, "/mq_request_%s_%d", "Maciek Kufel", getpid());
+
+    sprintf (mq_name2, "/mq_response_%s_%d", "Ahmed Ahres", getpid());
+    printf("1st queue name: %s\n", mq_name1);
+
+
+    printf("2nd queue name: %s\n", mq_name2);
+
+    attr.mq_maxmsg  = MAX_MESSAGE_LENGTH;
     attr.mq_msgsize = sizeof (MQ_REQUEST_MESSAGE);
     mq_fd_request = mq_open (mq_name1, O_WRONLY | O_CREAT | O_EXCL, 0600, &attr);
 
-    attr.mq_maxmsg  = 10;
+    attr.mq_maxmsg  = MAX_MESSAGE_LENGTH;
     attr.mq_msgsize = sizeof (MQ_RESPONSE_MESSAGE);
     mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL, 0600, &attr);
 
+
+    getattr(mq_fd_request);
+    getattr(mq_fd_response);
 
     processID = create_workers(NROF_WORKERS);
     printf("Process ID after children creation: %d\n", processID);

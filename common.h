@@ -16,8 +16,8 @@
 
 // TODO: put your definitions of the datastructures here
 // two message queues
-static char    mq_name1[MQ_MAX_MESSAGES];
-static char    mq_name2[MQ_MAX_MESSAGES];
+static char    mq_name1[80];
+static char    mq_name2[80];
 
 typedef struct
 {

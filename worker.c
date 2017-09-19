@@ -91,7 +91,7 @@ message_queue_child (void)
 int main (int argc, char * argv[])
 {
 
-    printf("Child process %d working: \n", getpid());
+//    printf("Child process %d working: \n", getpid());
     message_queue_child();
     // TODO:
     // (see message_queue_test() in interprocess_basic.c)

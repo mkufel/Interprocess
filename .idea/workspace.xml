@@ -14,9 +14,8 @@
     <list default="true" id="5f408931-596b-43b4-80ae-962e42b4eca8" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/farmer" afterPath="$PROJECT_DIR$/farmer" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worker" afterPath="$PROJECT_DIR$/worker" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/common.h" afterPath="$PROJECT_DIR$/common.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/farmer.c" afterPath="$PROJECT_DIR$/farmer.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/interprocess_basics.c" afterPath="$PROJECT_DIR$/interprocess_basics.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worker.c" afterPath="$PROJECT_DIR$/worker.c" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -39,11 +38,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="farmer.c" pinned="false" current-in-tab="true">
+      <file leaf-file-name="farmer.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/farmer.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
-              <caret line="97" column="4" lean-forward="false" selection-start-line="97" selection-start-column="4" selection-end-line="97" selection-end-column="4" />
+            <state relative-caret-position="550">
+              <caret line="91" column="14" lean-forward="false" selection-start-line="91" selection-start-column="14" selection-end-line="91" selection-end-column="14" />
               <folding>
                 <element signature="e#455#473#0" expanded="true" />
               </folding>
@@ -93,11 +92,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="worker.c" pinned="false" current-in-tab="false">
+      <file leaf-file-name="worker.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/worker.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="60" column="25" lean-forward="true" selection-start-line="60" selection-start-column="25" selection-end-line="60" selection-end-column="25" />
+            <state relative-caret-position="234">
+              <caret line="92" column="0" lean-forward="true" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
               <folding>
                 <element signature="e#494#512#0" expanded="true" />
               </folding>
@@ -108,8 +107,8 @@
       <file leaf-file-name="common.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/common.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="18" column="39" lean-forward="false" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="39" />
+            <state relative-caret-position="342">
+              <caret line="19" column="26" lean-forward="false" selection-start-line="19" selection-start-column="26" selection-end-line="19" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -118,8 +117,8 @@
       <file leaf-file-name="interprocess_basics.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/interprocess_basics.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="168" column="40" lean-forward="false" selection-start-line="168" selection-start-column="40" selection-end-line="168" selection-end-column="40" />
+            <state relative-caret-position="789">
+              <caret line="48" column="14" lean-forward="true" selection-start-line="48" selection-start-column="14" selection-end-line="48" selection-end-column="14" />
               <folding>
                 <element signature="e#775#793#0" expanded="true" />
               </folding>
@@ -157,10 +156,10 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/settings.h" />
-        <option value="$PROJECT_DIR$/common.h" />
         <option value="$PROJECT_DIR$/interprocess_basics.c" />
-        <option value="$PROJECT_DIR$/worker.c" />
+        <option value="$PROJECT_DIR$/common.h" />
         <option value="$PROJECT_DIR$/farmer.c" />
+        <option value="$PROJECT_DIR$/worker.c" />
       </list>
     </option>
   </component>
@@ -248,12 +247,12 @@
       <workItem from="1505375225984" duration="2194000" />
       <workItem from="1505390872444" duration="21342000" />
       <workItem from="1505595832618" duration="4087000" />
-      <workItem from="1505769151743" duration="3960000" />
+      <workItem from="1505769151743" duration="5134000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32095000" />
+    <option name="totallyTimeSpent" value="33269000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="387" y="44" width="1857" height="995" extended-state="6" />
@@ -675,24 +674,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/interprocess_basics.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="168" column="40" lean-forward="false" selection-start-line="168" selection-start-column="40" selection-end-line="168" selection-end-column="40" />
-          <folding>
-            <element signature="e#775#793#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/common.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="18" column="39" lean-forward="false" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/settings.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
@@ -709,22 +690,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/worker.c">
+    <entry file="file://$PROJECT_DIR$/interprocess_basics.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="60" column="25" lean-forward="true" selection-start-line="60" selection-start-column="25" selection-end-line="60" selection-end-column="25" />
+        <state relative-caret-position="789">
+          <caret line="48" column="14" lean-forward="true" selection-start-line="48" selection-start-column="14" selection-end-line="48" selection-end-column="14" />
           <folding>
-            <element signature="e#494#512#0" expanded="true" />
+            <element signature="e#775#793#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="19" column="26" lean-forward="false" selection-start-line="19" selection-start-column="26" selection-end-line="19" selection-end-column="26" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/farmer.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="97" column="4" lean-forward="false" selection-start-line="97" selection-start-column="4" selection-end-line="97" selection-end-column="4" />
+        <state relative-caret-position="550">
+          <caret line="91" column="14" lean-forward="false" selection-start-line="91" selection-start-column="14" selection-end-line="91" selection-end-column="14" />
           <folding>
             <element signature="e#455#473#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/worker.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="92" column="0" lean-forward="true" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+          <folding>
+            <element signature="e#494#512#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -212,21 +212,33 @@ int main (int argc, char * argv[])
     if (processID < 0) {
         perror("fork() failed");
         exit (1);
-    } else {
-        req.md5[0] = 'a';
-        req.startingPoint = 'b';
-        sleep(3);
-        // send the request
-        printf ("parent: sending...\n");
-        mq_send (mq_fd_request, (char *) &req, sizeof (req), 0);
+    } else{
+
+        for (int i = 0; i < NROF_WORKERS; ++i) {
+            req.md5[0] = (char) ('a' + i);
+            req.startingPoint = (char) ('b' + i);
+            sleep(3);
+            // send the request
+            printf ("parent: sending...\n");
+            mq_send (mq_fd_request, (char *) &req, sizeof (req), 0);
+        }
+//        req.md5[0] = 'a';
+//        req.startingPoint = 'b';
+//        sleep(3);
+//        // send the request
+//        printf ("parent: sending...\n");
+//        mq_send (mq_fd_request, (char *) &req, sizeof (req), 0);
 
         sleep (3);
         // read the result and store it in the response message
-        printf ("parent: receiving...\n");
-        mq_receive (mq_fd_response, (char *) &rsp, sizeof (rsp), NULL);
+        for (int j = 0; j < NROF_WORKERS ; ++j) {
+            printf ("parent: receiving...\n");
+            mq_receive (mq_fd_response, (char *) &rsp, sizeof (rsp), NULL);
+            printf("parent: received: %c, %c \n", rsp.hashedValue[0], rsp.md5[0]);
+
+        }
 
         sleep(3);
-        printf("parent: received: %c, %c \n", rsp.hashedValue[0], rsp.md5[0]);
 
         sleep(1);
 

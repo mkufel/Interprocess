@@ -107,6 +107,7 @@ message_queue_test (void)
 
     mq_fd_request = mq_open (mq_name1, O_RDONLY);
     mq_fd_response = mq_open (mq_name2, O_WRONLY);
+    printf("queue parent: %d\n", mq_fd_response);
 
     printf("1st queue name: %s\n", mq_name1);
 
@@ -188,7 +189,55 @@ int main (int argc, char * argv[])
         fprintf (stderr, "%s: invalid arguments\n", argv[0]);
     }
 
-    message_queue_test();
+    mqd_t               mq_fd_request;
+    mqd_t               mq_fd_response;
+    MQ_REQUEST_MESSAGE  req;
+    MQ_RESPONSE_MESSAGE rsp;
+    struct mq_attr      attr;
+
+    sprintf (mq_name1, "/mq_request_%s_%d", "Maciek Kufel", getpid());
+    sprintf (mq_name2, "/mq_response_%s_%d", "Ahmed Ahres", getpid());
+    printf("1st queue name: %s\n", mq_name1);
+    printf("2nd queue name: %s\n", mq_name2);
+
+    attr.mq_maxmsg = MQ_MAX_MESSAGES;
+    attr.mq_msgsize = sizeof(MQ_REQUEST_MESSAGE);
+    mq_fd_request = mq_open (mq_name1, O_WRONLY | O_CREAT | O_EXCL | O_NONBLOCK , 0600, &attr);
+
+    attr.mq_maxmsg = MQ_MAX_MESSAGES;
+    attr.mq_msgsize = sizeof(MQ_RESPONSE_MESSAGE);
+    mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL | O_NONBLOCK, 0600, &attr);
+
+    pid_t processID = create_workers(NROF_WORKERS);
+    if (processID < 0) {
+        perror("fork() failed");
+        exit (1);
+    } else {
+        req.md5[0] = 'a';
+        req.startingPoint = 'b';
+        sleep(3);
+        // send the request
+        printf ("parent: sending...\n");
+        mq_send (mq_fd_request, (char *) &req, sizeof (req), 0);
+
+        sleep (3);
+        // read the result and store it in the response message
+        printf ("parent: receiving...\n");
+        mq_receive (mq_fd_response, (char *) &rsp, sizeof (rsp), NULL);
+
+        sleep(3);
+        printf("parent: received: %c, %c \n", rsp.hashedValue[0], rsp.md5[0]);
+
+        sleep(1);
+
+        waitpid(processID, NULL, 0);   // wait for the child
+
+        mq_close(mq_fd_response);
+        mq_close(mq_fd_request);
+        mq_unlink(mq_name1);
+        mq_unlink(mq_name2);
+    }
+
 
     // TODO:
     //  * create the child processes (see process_test() and message_queue_test())

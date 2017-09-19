@@ -16,11 +16,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <errno.h>          // for perror()
+#include <errno.h>
+#include <time.h>
 #include <unistd.h>         // for getpid()
 #include <mqueue.h>         // for mq-stuff
 #include <time.h>           // for time()
 #include <complex.h>
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -56,6 +58,25 @@ getattr (mqd_t mq_fd)
              mq_fd, attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
 }
 
+/*
+ * rsleep(int t)
+ *
+ * The calling thread will be suspended for a random amount of time
+ * between 0 and t microseconds
+ * At the first call, the random generator is seeded with the current time
+ */
+static void rsleep (int t)
+{
+    static bool first_call = true;
+
+    if (first_call == true)
+    {
+        srandom (time(NULL) % getpid());
+        first_call = false;
+    }
+    usleep (random () % t);
+}
+
 
 
 static void
@@ -72,6 +93,7 @@ message_queue_child (void)
 
     mq_fd_request = mq_open (mq_name1, O_RDONLY);
     mq_fd_response = mq_open (mq_name2, O_WRONLY);
+    printf("queue: %d\n", mq_fd_response);
 
     attr.mq_maxmsg  = 10;
     attr.mq_msgsize = sizeof (MQ_REQUEST_MESSAGE);
@@ -86,7 +108,6 @@ message_queue_child (void)
     printf("2nd queue name: %s\n", mq_name2);
 
     sprintf (mq_name1, "/mq_request_%s_%d", "Maciek Kufel", getppid());
-
     sprintf (mq_name2, "/mq_response_%s_%d", "Ahmed Ahres", getppid());
     printf("1st queue name: %s\n", mq_name1);
 
@@ -123,9 +144,32 @@ message_queue_child (void)
 
 int main (int argc, char * argv[])
 {
+    mqd_t               mq_fd_request;
+    mqd_t               mq_fd_response;
+    MQ_REQUEST_MESSAGE  req;
+    MQ_RESPONSE_MESSAGE rsp;
+    mq_fd_request = mq_open(argv[1], O_RDONLY);
+    mq_fd_response = mq_open(argv[2], O_WRONLY);
 
-//    printf("Child process %d working: \n", getpid());
-    message_queue_child();
+    printf ("                                   child: receiving...\n");
+    mq_receive (mq_fd_request, (char *) &req, sizeof(req), NULL);
+    rsleep(10000);
+    printf ("                                   child: received: %c, %c\n",
+            req.md5[0], req.startingPoint);
+    rsp.md5[0] = 'z';
+    rsp.hashedValue[0] = 'd';
+
+    rsleep (10000);
+    // send the response
+    printf ("                                   child: sending...\n");
+    mq_send (mq_fd_response, (char *) &rsp, sizeof (rsp), 0);
+
+    mq_close (mq_fd_response);
+    mq_close (mq_fd_request);
+    mq_unlink(argv[1]);
+    mq_unlink(argv[2]);
+
+
     // TODO:
     // (see message_queue_test() in interprocess_basic.c)
     //  * open the two message queues (whose names are provided in the arguments)
@@ -141,24 +185,5 @@ int main (int argc, char * argv[])
 }
 
 
-
-/*
- * rsleep(int t)
- *
- * The calling thread will be suspended for a random amount of time
- * between 0 and t microseconds
- * At the first call, the random generator is seeded with the current time
- */
-//static void rsleep (int t)
-//{
-//    static bool first_call = true;
-//
-//    if (first_call == true)
-//    {
-//        srandom (time (NULL) % getpid ());
-//        first_call = false;
-//    }
-//    usleep (random() % t);
-//}
 
 

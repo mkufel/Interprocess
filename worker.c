@@ -40,6 +40,25 @@
 //static void rsleep (int t);
 
 static void
+getattr (mqd_t mq_fd)
+{
+    struct mq_attr      attr;
+    int                 rtnval;
+
+    rtnval = mq_getattr (mq_fd, &attr);
+    if (rtnval == -1)
+    {
+        perror ("mq_getattr() failed");
+        exit (1);
+    }
+    fprintf (stderr, "%d: mqdes=%d max=%ld size=%ld nrof=%ld\n",
+             getpid(),
+             mq_fd, attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
+}
+
+
+
+static void
 message_queue_child (void)
 {
     mqd_t               mq_fd_request;
@@ -62,11 +81,25 @@ message_queue_child (void)
     attr.mq_msgsize = sizeof (MQ_RESPONSE_MESSAGE);
     mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL, 0600, &attr);
 
+    printf("1st queue name: %s\n", mq_name1);
 
+    printf("2nd queue name: %s\n", mq_name2);
+
+    sprintf (mq_name1, "/mq_request_%s_%d", "Maciek Kufel", getppid());
+
+    sprintf (mq_name2, "/mq_response_%s_%d", "Ahmed Ahres", getppid());
+    printf("1st queue name: %s\n", mq_name1);
+
+
+    printf("2nd queue name: %s\n", mq_name2);
+
+//    getattr(mq_fd_request);
+//    getattr(mq_fd_response);
 
     // read the message queue and store it in the request message
     printf ("                                   child: receiving...\n");
-    mq_receive (mq_fd_request, (char *) &req, sizeof (req), NULL);
+    int receiveResult = mq_receive (mq_fd_request, (char *) &req, sizeof (req), NULL);
+    printf("receiveResult %d", receiveResult);
     sleep (3);
 
     printf ("                                   child: received: %c, %c\n",

@@ -197,7 +197,7 @@ md5s (const char * msg, int mlen)
 	return (rtnval);
 }
 
-//#ifdef _2INC0_STAND_ALONE_
+#ifdef _2INC0_STAND_ALONE_
 
 int main( int argc, char *argv[] )
 {
@@ -221,5 +221,6 @@ int main( int argc, char *argv[] )
     return 0;
 }
 
-//#endif
+#endif
+
 

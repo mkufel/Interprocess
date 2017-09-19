@@ -217,7 +217,8 @@ int main (int argc, char * argv[])
     } else{
 
         for (int i = 0; i < NROF_WORKERS; ++i) {
-            req.md5[0] = (char) ('a' + i);
+            req.md5 = md5_list[0];
+            printf("Passed md5: %llx\n", md5_list[0]);
             req.startingPoint = (char) ('b' + i);
             sleep(3);
             // send the request

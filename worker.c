@@ -79,18 +79,20 @@ static void rsleep (int t)
 
 int main (int argc, char * argv[])
 {
+
     mqd_t               mq_fd_request;
     mqd_t               mq_fd_response;
     MQ_REQUEST_MESSAGE  req;
     MQ_RESPONSE_MESSAGE rsp;
+
     mq_fd_request = mq_open(argv[1], O_RDONLY);
     mq_fd_response = mq_open(argv[2], O_WRONLY);
 
     printf ("                                   child: receiving...\n");
     mq_receive (mq_fd_request, (char *) &req, sizeof(req), NULL);
     rsleep(10000);
-    printf ("                                   child: received: %c, %c\n",
-            req.md5[0], req.startingPoint);
+    printf ("                                   child: received: %llx, %c \n",
+            req.md5, req.startingPoint);
 
     rsp.result = md5s(req.md5, 1);
     rsp.hashedValue[0] = 'd';

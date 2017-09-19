@@ -23,7 +23,7 @@ typedef struct
 {
     // a data structure with 2 members
     char    startingPoint;
-    char    md5[32];
+    uint128_t md5;
 } MQ_REQUEST_MESSAGE;
 
 typedef struct

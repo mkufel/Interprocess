@@ -22,20 +22,12 @@
 #include <mqueue.h>         // for mq-stuff
 #include <time.h>           // for time()
 #include <complex.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
-#include <unistd.h>         // for execlp
-#include <mqueue.h>         // for mq
 #include "settings.h"
-#include "common.h"
-#include "md5s.h"
 #include "common.h"
 #include "md5s.h"
 
@@ -78,70 +70,6 @@ static void rsleep (int t)
 }
 
 
-
-static void
-message_queue_child (void)
-{
-    mqd_t               mq_fd_request;
-    mqd_t               mq_fd_response;
-    MQ_REQUEST_MESSAGE  req;
-    MQ_RESPONSE_MESSAGE rsp;
-    struct mq_attr      attr;
-
-//    char * z = 's';
-//    uint128_t s = md5s(* z, 1);
-
-    mq_fd_request = mq_open (mq_name1, O_RDONLY);
-    mq_fd_response = mq_open (mq_name2, O_WRONLY);
-    printf("queue: %d\n", mq_fd_response);
-
-    attr.mq_maxmsg  = 10;
-    attr.mq_msgsize = sizeof (MQ_REQUEST_MESSAGE);
-    mq_fd_request = mq_open (mq_name1, O_WRONLY | O_CREAT | O_EXCL, 0600, &attr);
-
-    attr.mq_maxmsg  = 10;
-    attr.mq_msgsize = sizeof (MQ_RESPONSE_MESSAGE);
-    mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL, 0600, &attr);
-
-    printf("1st queue name: %s\n", mq_name1);
-
-    printf("2nd queue name: %s\n", mq_name2);
-
-    sprintf (mq_name1, "/mq_request_%s_%d", "Maciek Kufel", getppid());
-    sprintf (mq_name2, "/mq_response_%s_%d", "Ahmed Ahres", getppid());
-    printf("1st queue name: %s\n", mq_name1);
-
-
-    printf("2nd queue name: %s\n", mq_name2);
-
-//    getattr(mq_fd_request);
-//    getattr(mq_fd_response);
-
-    // read the message queue and store it in the request message
-    printf ("                                   child: receiving...\n");
-    int receiveResult = mq_receive (mq_fd_request, (char *) &req, sizeof (req), NULL);
-    printf("receiveResult %d", receiveResult);
-    sleep (3);
-
-    printf ("                                   child: received: %c, %c\n",
-            req.md5[0], req.startingPoint);
-
-    // fill response message
-    // e   contains the length of f[]
-    // f[] contains characters abcd
-    // g[] contains characters ABCDEFGHIJ + \0-terminator (so it is a C-string)
-    rsp.md5[0] = 'z';
-    rsp.hashedValue[0] = 'd';
-
-    sleep (3);
-    // send the response
-    printf ("                                   child: sending...\n");
-    mq_send (mq_fd_response, (char *) &rsp, sizeof (rsp), 0);
-
-    mq_close (mq_fd_response);
-    mq_close (mq_fd_request);
-}
-
 int main (int argc, char * argv[])
 {
     mqd_t               mq_fd_request;
@@ -153,9 +81,16 @@ int main (int argc, char * argv[])
 
     printf ("                                   child: receiving...\n");
     mq_receive (mq_fd_request, (char *) &req, sizeof(req), NULL);
+
     rsleep(10000);
+
     printf ("                                   child: received: %c, %c\n",
             req.md5[0], req.startingPoint);
+
+    uint128_t result = md5s(req.md5,1);
+
+//    printf("result %p", result);
+
     rsp.md5[0] = 'z';
     rsp.hashedValue[0] = 'd';
 

@@ -238,7 +238,8 @@ int main (int argc, char * argv[])
         for (int j = 0; j < NROF_WORKERS ; ++j) {
             printf ("parent: receiving...\n");
             mq_receive (mq_fd_response, (char *) &rsp, sizeof (rsp), NULL);
-            printf("parent: received: %c, %llx \n", rsp.hashedValue[0], rsp.result);
+            printf("parent: received: %c \n", rsp.hashedValue);
+            printf("hash received: %llx\n",rsp.result );
 
         }
 

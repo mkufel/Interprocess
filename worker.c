@@ -91,7 +91,7 @@ int main (int argc, char * argv[])
     printf ("                                   child: receiving...\n");
     mq_receive (mq_fd_request, (char *) &req, sizeof(req), NULL);
     rsleep(10000);
-    printf ("                                   child: received: %ju \n",
+    printf ("                                   child: received: %llx \n",
             req.md5);
 
     printf("                                    and starting point %c \n",
@@ -112,15 +112,15 @@ int main (int argc, char * argv[])
 
 
     // TODO:
-    // (see message_queue_test() in interprocess_basic.c)
-    //  * open the two message queues (whose names are provided in the arguments)
-    //  * repeatingly:
-    //      - read from a message queue the new job to do
-    //      - wait a random amount of time (e.g. rsleep(10000);)
-    //      - do that job 
-    //      - write the results to a message queue
-    //    until there are no more tasks to do
-    //  * close the message queues
+    //// (see message_queue_test() in interprocess_basic.c)
+    ////  * open the two message queues (whose names are provided in the arguments)
+    //  * repeatingly: (just everything a "true" while)
+    ////      - read from a message queue the new job to do
+    ////     - wait a random amount of time (e.g. rsleep(10000);)
+    //      - do that job (Generare string, hash them, compare to the result. If same, send a response)
+    ////      - write the results to a message queue
+    //    until there are no more tasks to do (just a break)
+    ////  * close the message queues
     
     return (0);
 }

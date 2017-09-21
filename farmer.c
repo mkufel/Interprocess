@@ -256,13 +256,16 @@ int main (int argc, char * argv[])
 
 
     // TODO:
-    //  * create the child processes (see process_test() and message_queue_test())
+    ////  * create the child processes (see process_test() and message_queue_test())
     //  * do the farming
-    //  * wait until the chilren have been stopped (see process_test())
-    //  * clean up the message queues (see message_queue_test())
+    ////  * wait until the chilren have been stopped (see process_test())
+    ////  * clean up the message queues (see message_queue_test())
+    // Add a loop in the farmer to send jobs until all sent
+
 
     // Important notice: make sure that the names of the message queues contain your
     // student name and the process id (to ensure uniqueness during testing)
 
     return (0);
 }
+

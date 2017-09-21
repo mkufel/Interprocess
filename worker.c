@@ -88,7 +88,7 @@ int main (int argc, char * argv[])
     mq_fd_request = mq_open(argv[1], O_RDONLY);
     mq_fd_response = mq_open(argv[2], O_WRONLY);
 
-    printf ("                                   child: receiving...\n");
+    printf ("                                   child: receiving...\n");0
     mq_receive (mq_fd_request, (char *) &req, sizeof(req), NULL);
     rsleep(10000);
     printf ("                                   child: received: %llx \n",
@@ -119,7 +119,7 @@ int main (int argc, char * argv[])
     ////     - wait a random amount of time (e.g. rsleep(10000);)
     //      - do that job (Generare string, hash them, compare to the result. If same, send a response)
     ////      - write the results to a message queue
-    //    until there are no more tasks to do (just a break)
+    //    until there are no more tasks to do (just a break if -1)
     ////  * close the message queues
     
     return (0);

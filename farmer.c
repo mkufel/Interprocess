@@ -216,26 +216,18 @@ int main (int argc, char * argv[])
         exit (1);
     } else{
 
-        for (int i = 0; i < NROF_WORKERS; ++i) {
+        for (int i = 0; i < JOBS_NROF; ++i) {
             req.md5 = md5_list[0];
-            printf("Passed md5: %llx\n", md5_list[0]);
-            req.startingPoint = (char) ('b' + i);
-            printf("Passed startinPoint: %c \n", req.startingPoint);
+            req.startingPoint = (char) ('a' + i);
             sleep(3);
             // send the request
             printf ("parent: sending...\n");
             mq_send (mq_fd_request, (char *) &req, sizeof (req), 0);
         }
-//        req.md5[0] = 'a';
-//        req.startingPoint = 'b';
-//        sleep(3);
-//        // send the request
-//        printf ("parent: sending...\n");
-//        mq_send (mq_fd_request, (char *) &req, sizeof (req), 0);
 
         sleep (3);
         // read the result and store it in the response message
-        for (int j = 0; j < NROF_WORKERS ; ++j) {
+        for (int j = 0; j < JOBS_NROF ; ++j) {
             printf ("parent: receiving...\n");
             mq_receive (mq_fd_response, (char *) &rsp, sizeof (rsp), NULL);
             printf("parent: received: %c, %llx \n", rsp.hashedValue[0], rsp.result);
@@ -261,7 +253,8 @@ int main (int argc, char * argv[])
     ////  * wait until the chilren have been stopped (see process_test())
     ////  * clean up the message queues (see message_queue_test())
     // Add a loop in the farmer to send jobs until all sent
-
+    // Make sure passed messages make sense.
+    // Add a method for breaking children
 
     // Important notice: make sure that the names of the message queues contain your
     // student name and the process id (to ensure uniqueness during testing)

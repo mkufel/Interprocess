@@ -70,7 +70,7 @@ int inc(char *c) {
 }
 
 void generateStrings(char *array, uint128_t req, char startingPoint) {
-    int n = 6;
+    int n = 5;
     int i, j;
     char *c = malloc((n+1)*sizeof(char));
     for (i = 1; i <= n; i++) {
@@ -79,9 +79,13 @@ void generateStrings(char *array, uint128_t req, char startingPoint) {
         do {
             //printf("%s\n",c);
             uint128_t result = md5s(c, sizeof(c));
+            //printf("hashed value: %llx\n", result);
             if (result == req) {
-                printf("Generate string if");
-                array = c;
+                printf("Generated string is %s ", c);
+                *array = *c;
+
+                printf("array with pointer %c ", *array);
+                printf("array without pointer %s ", array);
                 break;
             }
         } while (inc(c));
@@ -128,12 +132,12 @@ int main (int argc, char * argv[])
     printf("                                    and starting point %c \n",
            req.startingPoint);
 
-//    char * resultString;
-
-//    generateStrings(resultString, req.md5, req.startingPoint);
+    char *resultString;
+    generateStrings(&resultString, req.md5, req.startingPoint);
+    printf("found %c", resultString);
 //    rsp.result = md5s(req.md5, 1);
 //    sprintf (rsp.hashedValue, resultString);
-    printf("Hashed value: %c",rsp.hashedValue);
+    //printf(" Hashed value: %c",rsp.hashedValue);
     rsleep (10000);
     // send the response
     printf ("                                   child: sending...\n");

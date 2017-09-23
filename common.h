@@ -22,14 +22,13 @@ static char    mq_name2[80];
 typedef struct
 {
     // a data structure with 2 members
-    char    startingPoint;
     uint128_t md5;
 } MQ_REQUEST_MESSAGE;
 
 typedef struct
 {
     // a data structure with 2 members
-    char    hashedValue[32];
+    char      initialString[32];
     uint128_t result;
 } MQ_RESPONSE_MESSAGE;
 

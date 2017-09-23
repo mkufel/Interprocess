@@ -58,6 +58,41 @@ getattr (mqd_t mq_fd)
              mq_fd, attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
 }
 
+
+int inc(char *c) {
+    if(c[0]==0) return 0;
+    if(c[0]=='z'){
+        c[0]='a';
+        return inc(c+sizeof(char));
+    }
+    c[0]++;
+    return 1;
+}
+
+void generateStrings(char *array, uint128_t req, char startingPoint) {
+    int n = 5;
+    int i, j;
+    char *c = malloc((n+1)*sizeof(char));
+    for (i = 1; i <= n; i++) {
+        for (j = 0; j < i; j++) c[j] = 'a';
+        c[i] = 0;
+        do {
+            //printf("%s\n",c);
+            uint128_t result = md5s(c, sizeof(c));
+            //printf("hashed value: %llx\n", result);
+            if (result == req) {
+                printf("Generated string is %s ", c);
+                *array = *c;
+
+                printf("array with pointer %c ", *array);
+                printf("array without pointer %s ", array);
+                break;
+            }
+        } while (inc(c));
+    }
+    free(c);
+}
+
 /*
  * rsleep(int t)
  *
@@ -97,9 +132,12 @@ int main (int argc, char * argv[])
     printf("                                    and starting point %c \n",
            req.startingPoint);
 
-    rsp.result = md5s(req.md5, 1);
-    rsp.hashedValue[0] = 'd';
-
+    char *resultString;
+    generateStrings(&resultString, req.md5, req.startingPoint);
+    printf("found %c", resultString);
+//    rsp.result = md5s(req.md5, 1);
+//    sprintf (rsp.hashedValue, resultString);
+    //printf(" Hashed value: %c",rsp.hashedValue);
     rsleep (10000);
     // send the response
     printf ("                                   child: sending...\n");

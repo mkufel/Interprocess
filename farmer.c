@@ -198,7 +198,7 @@ int main (int argc, char * argv[])
     struct mq_attr      attr;
 
     sprintf (mq_name1, "/mq_request_%s_%d", "Maciek Kufel", getpid());
-    sprintf (mq_name2, "/mq_response_%s_%d", "Ahmed Ahres", getpid());
+    sprintf (mq_name2, "/mq_response_%s_%d", "Ahmed Ahres 0978238", getpid());
     printf("1st queue name: %s\n", mq_name1);
     printf("2nd queue name: %s\n", mq_name2);
 
@@ -215,30 +215,41 @@ int main (int argc, char * argv[])
         perror("fork() failed");
         exit (1);
     } else{
+        int counter = 0;
+        while (counter < JOBS_NROF) {
+            for (int i = 0; i < NROF_WORKERS; ++i) {
+                req.md5 = md5_list[4];
+                printf("Passed md5: %llx\n", req.md5);
+                req.startingPoint = (char) ('b' + i);
+                printf("Passed startinPoint: %c \n", req.startingPoint);
+                sleep(3);
+                // send the request
+                printf("parent: sending...\n");
+                mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
+            }
+//        req.md5[0] = 'a';
+//        req.startingPoint = 'b';
+//        sleep(3);
+//        // send the request
+//        printf ("parent: sending...\n");
+//        mq_send (mq_fd_request, (char *) &req, sizeof (req), 0);
 
-        for (int i = 0; i < JOBS_NROF; ++i) {
-            req.md5 = md5_list[0];
-            req.startingPoint = (char) ('a' + i);
             sleep(3);
-            // send the request
-            printf ("parent: sending...\n");
-            mq_send (mq_fd_request, (char *) &req, sizeof (req), 0);
+            // read the result and store it in the response message
+            for (int j = 0; j < NROF_WORKERS; ++j) {
+                printf("parent: receiving...\n");
+                mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
+                printf("parent: received: %c \n", rsp.hashedValue);
+                printf("hash received: %llx\n", rsp.result);
+
+            }
+
+            sleep(3);
+
+            sleep(1);
+
+            waitpid(processID, NULL, 0);   // wait for the child
         }
-
-        sleep (3);
-        // read the result and store it in the response message
-        for (int j = 0; j < JOBS_NROF ; ++j) {
-            printf ("parent: receiving...\n");
-            mq_receive (mq_fd_response, (char *) &rsp, sizeof (rsp), NULL);
-            printf("parent: received: %c, %llx \n", rsp.hashedValue[0], rsp.result);
-
-        }
-
-        sleep(3);
-
-        sleep(1);
-
-        waitpid(processID, NULL, 0);   // wait for the child
 
         mq_close(mq_fd_response);
         mq_close(mq_fd_request);

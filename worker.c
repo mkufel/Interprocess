@@ -2,6 +2,8 @@
  * Operating Systems [2INCO] Practical Assignment
  * Interprocess Communication
  *
+ * Group 21
+ *
  * Maciej Kufel 0944597
  * Ahmed Ahres 0978238
  *
@@ -25,7 +27,7 @@
 
 
 static void
-getattr (mqd_t mq_fd)  //not sure if we have to use it
+getattr (mqd_t mq_fd)
 {
     struct mq_attr      attr;
     int                 rtnval;
@@ -41,7 +43,9 @@ getattr (mqd_t mq_fd)  //not sure if we have to use it
              mq_fd, attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
 }
 
-//Copied from the internet, either write a new one or add a reference
+/* Copied from the internet
+ * Reference: https://stackoverflow.com/questions/4764608/generate-all-strings-under-length-n-in-c
+ */
 int inc(char *c) {
     if(c[0]==0) return 0;
     if(c[0]=='z'){
@@ -52,27 +56,26 @@ int inc(char *c) {
     return 1;
 }
 
-
-
+/* Copied from the internet with some changes
+ * Reference: https://stackoverflow.com/questions/4764608/generate-all-strings-under-length-n-in-c
+ */
 char * generateStrings(uint128_t expectedHash, char startingChar)
 {
-    int n = MAX_MESSAGE_LENGTH-1;
+    int n = MAX_MESSAGE_LENGTH - 1; // -1 because the startingChar is not included
     int i, j;
     char *c = malloc((n+1)*sizeof(char));
-
-
     for (i = 0; i <= n; i++) {
         for (j = 0; j < i; j++) c[j] = 'a';
         c[i] = 0;
         do {
             char *string = malloc(sizeof(c)+1);
 
-            string[0] = startingChar;
+            string[0] = startingChar; // First character is startingChar
             for (int k = 1; k < sizeof(string); ++k) {
                 string[k] = c[k-1];
             }
-            uint128_t result = md5s(string, sizeof(string));
-            if (result == expectedHash) {
+            uint128_t result = md5s(string, sizeof(string)); // Hash the generated string
+            if (result == expectedHash) { // Check if there is a match
                 return string;
             }
 
@@ -107,69 +110,51 @@ static void rsleep (int t)
 int main (int argc, char * argv[])
 {
 
-    mqd_t               mq_fd_request;
-    mqd_t               mq_fd_response;
-    MQ_REQUEST_MESSAGE  req;
-    MQ_RESPONSE_MESSAGE rsp;
+    mqd_t               mq_fd_request; // Request queue
+    mqd_t               mq_fd_response; // Response queue
+    MQ_REQUEST_MESSAGE  req; // Request message
+    MQ_RESPONSE_MESSAGE rsp; // Response message
 
-    mq_fd_request = mq_open(argv[1], O_RDONLY);
-    mq_fd_response = mq_open(argv[2], O_WRONLY);
-
-
+    mq_fd_request = mq_open(argv[1], O_RDONLY); // Open the request queue
+    mq_fd_response = mq_open(argv[2], O_WRONLY); // Open the response queue
 
     while(true)
     {
         ssize_t receivedResult;
-//        printf("                                   child: receiving...\n");
         receivedResult = mq_receive(mq_fd_request, (char *) &req, sizeof(req), NULL);
 
-        if (req.md5Request == 0)
+        if (req.md5Request == 0) // 0 is received when workers have to stop
         {
             break;
         }
 
         rsleep(10000);
-//        printf("                                   child: received: %llx ", req.md5Request);
-//        printf("with a startingChar %c\n", req.startingChar);
 
-        char *initialString; // string initially hashed into the md5 value of a request
+        char *initialString; // String initially hashed into the md5 value of a request
+        // Generate the strings starting with startingChar and compare the hash to md5Request
         initialString = generateStrings(req.md5Request, req.startingChar);
 
+        // If no match is found, continue and go to next erequest
         if (initialString == NULL)
         {
             continue;
         }
 
-//        printf("                                   String decoded: %s\n", initialString);
-
         rsleep(10000);
-        // send the response
+        // Send the response
         for(int j = 0; j < sizeof(initialString); j++)
         {
             rsp.decodedString[j] = initialString[j];
         }
         rsp.md5Response = req.md5Request;
-//        printf("                                   child: sending...\n");
         mq_send(mq_fd_response, (char *) &rsp, sizeof(rsp), 0);
         sleep(3);
     }
 
-    mq_close (mq_fd_response);
-    mq_close (mq_fd_request);
-    mq_unlink(argv[1]);
-    mq_unlink(argv[2]);
-
-
-    // TODO:
-    //// (see message_queue_test() in interprocess_basic.c)
-    ////  * open the two message queues (whose names are provided in the arguments)
-    ////  * repeatingly: (just everything a "true" while)
-    ////      - read from a message queue the new job to do
-    ////     - wait a random amount of time (e.g. rsleep(10000);)
-    ////      - do that job (Generare string, hash them, compare to the result. If same, send a response)
-    ////      - write the results to a message queue
-    ////    until there are no more tasks to do (just a break if -1)
-    ////  * close the message queues
+    mq_close (mq_fd_response); // Close the response queue
+    mq_close (mq_fd_request); // Close the request queue
+    mq_unlink(argv[1]); // Remove the request queue
+    mq_unlink(argv[2]); // Remove the response queue
     
     return (0);
 }

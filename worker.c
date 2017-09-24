@@ -120,7 +120,7 @@ int main (int argc, char * argv[])
     while(true)
     {
         ssize_t receivedResult;
-        printf("                                   child: receiving...\n");
+//        printf("                                   child: receiving...\n");
         receivedResult = mq_receive(mq_fd_request, (char *) &req, sizeof(req), NULL);
 
         if (req.md5Request == 0)
@@ -129,8 +129,8 @@ int main (int argc, char * argv[])
         }
 
         rsleep(10000);
-        printf("                                   child: received: %llx ", req.md5Request);
-        printf("with a startingChar %c\n", req.startingChar);
+//        printf("                                   child: received: %llx ", req.md5Request);
+//        printf("with a startingChar %c\n", req.startingChar);
 
         char *initialString; // string initially hashed into the md5 value of a request
         initialString = generateStrings(req.md5Request, req.startingChar);
@@ -140,7 +140,7 @@ int main (int argc, char * argv[])
             continue;
         }
 
-        printf("                                   String decoded: %s\n", initialString);
+//        printf("                                   String decoded: %s\n", initialString);
 
         rsleep(10000);
         // send the response
@@ -149,7 +149,7 @@ int main (int argc, char * argv[])
             rsp.decodedString[j] = initialString[j];
         }
         rsp.md5Response = req.md5Request;
-        printf("                                   child: sending...\n");
+//        printf("                                   child: sending...\n");
         mq_send(mq_fd_response, (char *) &rsp, sizeof(rsp), 0);
         sleep(3);
     }

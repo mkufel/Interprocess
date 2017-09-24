@@ -17,9 +17,21 @@
 #include <sys/wait.h>
 #include <unistd.h>         // for execlp
 #include <mqueue.h>         // for mq
+#include <stdbool.h>
 #include "settings.h"
 #include "common.h"
 #include "md5s.h"
+
+static long get_curr_msgs(mqd_t *q){
+    struct mq_attr  attr;
+
+    int res = mq_getattr(*q, &attr);
+    if (res < 0) {
+        exit(1);
+    }
+
+    return (attr.mq_curmsgs);
+}
 
 
 static void
@@ -87,8 +99,8 @@ int main (int argc, char * argv[])
     attr.mq_msgsize = sizeof(MQ_RESPONSE_MESSAGE);
     mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL | O_NONBLOCK, 0600, &attr);
 
-    getattr(mq_fd_request);
-    getattr(mq_fd_response);
+//    getattr(mq_fd_request);
+//    getattr(mq_fd_response);
 
     pid_t processID = create_workers(NROF_WORKERS);
 
@@ -105,28 +117,48 @@ int main (int argc, char * argv[])
                 req.startingChar++;
                 req.md5Request = md5_list[listcounter];
 
-                printf("parent: sending %llx, ", req.md5Request);
-                printf("starting character: %c\n", req.startingChar);
-                mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
+//                printf("parent: sending %llx, ", req.md5Request);
+//                printf("starting character: %c\n", req.startingChar);
+                if (get_curr_msgs(&mq_fd_request) != 10) {
+                    mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
+                } else {
+                    j--;
+                    sleep(3);
+                }
                 sleep(3);
             }
             listcounter++;
         }
 
-        sleep(3);
+//        sleep(30);
 
-        for (int i = 0; i < MD5_LIST_NROF; ++i)
+
+        for (int i = 0; i < MD5_LIST_NROF; i++)
         {
             //read the result and store it in the response message
-            printf("parent: receiving...\n");
-            mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
-            sleep(3);
-            printf("parent: received: %s ", rsp.decodedString);
-            printf("from the hash: %llx\n", rsp.md5Response);
+//            getattr(mq_fd_response);
+//              getattr(mq_fd_response);
+                int nr_msgs = get_curr_msgs(&mq_fd_response);
+            //printf("Ready to receive, queue length: %d\n", nr_msgs);
+            if (nr_msgs == MD5_LIST_NROF) {
+                for (int j = 0; j < MD5_LIST_NROF; j++)
+                {
+                    mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
+                    sleep(3);
+                    printf("%s\n", rsp.decodedString);
+                }
+                break;
+            } else {
+                sleep(5);
+                i--;
+            }
+
         }
 
         sleep(5);
+
         req.md5Request = 0; //command workers to stop
+
         for (int i = 0; i < NROF_WORKERS; i++) {
             mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
         }

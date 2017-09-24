@@ -18,6 +18,7 @@
 #include <time.h>
 #include <unistd.h>         // for getpid()
 #include <mqueue.h>         // for mq-stuff
+#include <string.h>
 #include "settings.h"
 #include "common.h"
 #include "md5s.h"
@@ -53,20 +54,29 @@ int inc(char *c) {
 
 
 
-char * generateStrings(uint128_t expectedHash)
+char * generateStrings(uint128_t expectedHash, char startingChar)
 {
-    int n = MAX_MESSAGE_LENGTH;
+    int n = MAX_MESSAGE_LENGTH-1;
     int i, j;
     char *c = malloc((n+1)*sizeof(char));
 
-    for (i = 1; i <= n; i++) {
+
+    for (i = 0; i <= n; i++) {
         for (j = 0; j < i; j++) c[j] = 'a';
         c[i] = 0;
         do {
-            uint128_t result = md5s(c, sizeof(c));
-            if (result == expectedHash) {
-                return c;
+            char *string = malloc(sizeof(c)+1);
+
+            string[0] = startingChar;
+            for (int k = 1; k < sizeof(string); ++k) {
+                string[k] = c[k-1];
             }
+            uint128_t result = md5s(string, sizeof(string));
+            if (result == expectedHash) {
+                return string;
+            }
+
+            free(string);
         } while (inc(c));
     }
     free(c);
@@ -113,25 +123,32 @@ int main (int argc, char * argv[])
         printf("                                   child: receiving...\n");
         receivedResult = mq_receive(mq_fd_request, (char *) &req, sizeof(req), NULL);
 
-        if (req.md5 == 0)
+        if (req.md5Request == 0)
         {
             break;
         }
 
         rsleep(10000);
-        printf("                                   child: received: %llx ", req.md5);
+        printf("                                   child: received: %llx ", req.md5Request);
+        printf("with a startingChar %c\n", req.startingChar);
 
         char *initialString; // string initially hashed into the md5 value of a request
-        initialString = generateStrings(req.md5);
-        printf("                                   and decoded: %s\n", initialString);
+        initialString = generateStrings(req.md5Request, req.startingChar);
+
+        if (initialString == NULL)
+        {
+            continue;
+        }
+
+        printf("                                   String decoded: %s\n", initialString);
 
         rsleep(10000);
         // send the response
         for(int j = 0; j < sizeof(initialString); j++)
         {
-            rsp.initialString[j] = initialString[j];
+            rsp.decodedString[j] = initialString[j];
         }
-        rsp.result = req.md5;
+        rsp.md5Response = req.md5Request;
         printf("                                   child: sending...\n");
         mq_send(mq_fd_response, (char *) &rsp, sizeof(rsp), 0);
         sleep(3);

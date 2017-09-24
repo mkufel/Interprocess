@@ -97,45 +97,23 @@ int main (int argc, char * argv[])
         exit (1);
     } else {
 
-//        printf("Process id %d, doing the parent stuff\n", getpid());
-//        // remaining of the parent stuff
-//        // fill request message
-//        req.md5 = md5_list[4];
-//
-//        sleep(3);
-//        // send the request
-//        printf("parent: sending...\n");
-//        int sendResult = mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
-//
-//        if (sendResult == -1) {
-//            printf("Error in sending");
-//        }
-//        sleep(3);
-//        // read the result and store it in the response message
-//        printf("parent: receiving...\n");
-//        mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
-//
-//        sleep(3);
-//        printf("parent: received: %llx, %s \n", rsp.result, rsp.initialString);
-//
-//        sleep(1);
-//
-//        waitpid(processID, NULL, 0);   // wait for the child
-
-
         sleep(3);
-        for (int i = 0; i < MD5_LIST_NROF; ++i)
-        {
-            req.md5 = md5_list[i];
+        int listcounter = 0;
+        while (listcounter < MD5_LIST_NROF) {
+            req.startingChar = 'a' - 1;
+            for (int j = 0; j < ALPHABET_NROF_CHAR; ++j) {
+                req.startingChar++;
+                req.md5Request = md5_list[listcounter];
 
-            // send the request
-            printf("parent: sending %llx \n", req.md5);
-            mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
-            sleep(3);
-
+                printf("parent: sending %llx, ", req.md5Request);
+                printf("starting character: %c\n", req.startingChar);
+                mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
+                sleep(3);
+            }
+            listcounter++;
         }
 
-        printf("Done sending\n");
+        sleep(3);
 
         for (int i = 0; i < MD5_LIST_NROF; ++i)
         {
@@ -143,14 +121,12 @@ int main (int argc, char * argv[])
             printf("parent: receiving...\n");
             mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
             sleep(3);
-            printf("parent: received: %s \n", rsp.initialString);
-            printf("hash received: %llx\n", rsp.result);
+            printf("parent: received: %s ", rsp.decodedString);
+            printf("from the hash: %llx\n", rsp.md5Response);
         }
 
-        printf("Done receiving\n");
-            sleep(30);
-
-        req.md5 = 0; //command workers to stop
+        sleep(5);
+        req.md5Request = 0; //command workers to stop
         for (int i = 0; i < NROF_WORKERS; i++) {
             mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
         }

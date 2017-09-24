@@ -27,10 +27,13 @@
 /*
  * Function to get the number of messages in a queue
  */
-static long get_curr_msgs(mqd_t *q){
+static long get_nof_messages(mqd_t *mq_fd)
+{
     struct mq_attr  attr;
-    int res = mq_getattr(*q, &attr);
-    if (res < 0) {
+    int rtnval = mq_getattr(*mq_fd, &attr);
+
+    if (rtnval < 0) {
+        perror ("mq_getattr() failed");
         exit(1);
     }
 
@@ -94,28 +97,33 @@ int main (int argc, char * argv[])
         exit (1);
     } else {
         sleep(3);
-        int listcounter = 0;
-        while (listcounter < MD5_LIST_NROF) {
+        int list_index = 0;
+        while (list_index < MD5_LIST_NROF)  //iterate through the input list of md5 hashes
+        {
             req.startingChar = 'a' - 1;
-            for (int j = 0; j < ALPHABET_NROF_CHAR; ++j) {
+
+            //for every character in the alphabet send a new job for a current hash
+            for (int j = 0; j < ALPHABET_NROF_CHAR; ++j)
+            {
                 req.startingChar++;
-                req.md5Request = md5_list[listcounter];
-                if (get_curr_msgs(&mq_fd_request) != 10) {
+                req.md5Request = md5_list[list_index];
+
+                if (get_nof_messages(&mq_fd_request) != MQ_MAX_MESSAGES) { //if request queue not full, send a message
                     mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
-                } else {
+                } else { //If request queue full, wait and repeat the same iteration
                     j--;
                     sleep(3);
                 }
                 sleep(3);
             }
-            listcounter++;
+            list_index++;
         }
 
         for (int i = 0; i < MD5_LIST_NROF; i++)
         {
-            //read the result and store it in the response message
-            int nr_msgs = get_curr_msgs(&mq_fd_response);
-                if (nr_msgs == MD5_LIST_NROF) {
+            //get the current number of messages in the response queue
+            long nr_msgs = get_nof_messages(&mq_fd_response);
+                if (nr_msgs == MD5_LIST_NROF) { //if responses for all sent jobs are present, start receiving
                     for (int j = 0; j < MD5_LIST_NROF; j++)
                     {
                         // Receive the decoded string
@@ -124,7 +132,7 @@ int main (int argc, char * argv[])
                         printf("%s\n", rsp.decodedString); // Print the decoded string
                     }
                 break;
-            } else {
+            } else { //if not all responses available yet, wait and repeat the same iteration
                 sleep(5);
                 i--;
             }

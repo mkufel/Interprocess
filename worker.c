@@ -20,30 +20,12 @@
 #include <time.h>
 #include <unistd.h>         // for getpid()
 #include <mqueue.h>         // for mq-stuff
-#include <string.h>
 #include "settings.h"
 #include "common.h"
 #include "md5s.h"
 
 
-static void
-getattr (mqd_t mq_fd)
-{
-    struct mq_attr      attr;
-    int                 rtnval;
-
-    rtnval = mq_getattr (mq_fd, &attr);
-    if (rtnval == -1)
-    {
-        perror ("mq_getattr() failed");
-        exit (1);
-    }
-    fprintf (stderr, "%d: mqdes=%d max=%ld size=%ld nrof=%ld\n",
-             getpid(),
-             mq_fd, attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
-}
-
-/* Copied from the internet
+/* Used the internet source
  * Reference: https://stackoverflow.com/questions/4764608/generate-all-strings-under-length-n-in-c
  */
 int inc(char *c) {
@@ -56,7 +38,7 @@ int inc(char *c) {
     return 1;
 }
 
-/* Copied from the internet with some changes
+/* Since string generation is not a focus of this assignment, we used the internet source
  * Reference: https://stackoverflow.com/questions/4764608/generate-all-strings-under-length-n-in-c
  */
 char * generateStrings(uint128_t expectedHash, char startingChar)
@@ -120,8 +102,7 @@ int main (int argc, char * argv[])
 
     while(true)
     {
-        ssize_t receivedResult;
-        receivedResult = mq_receive(mq_fd_request, (char *) &req, sizeof(req), NULL);
+        mq_receive(mq_fd_request, (char *) &req, sizeof(req), NULL);
 
         if (req.md5Request == 0) // 0 is received when workers have to stop
         {
@@ -146,6 +127,7 @@ int main (int argc, char * argv[])
         {
             rsp.decodedString[j] = initialString[j];
         }
+
         rsp.md5Response = req.md5Request;
         mq_send(mq_fd_response, (char *) &rsp, sizeof(rsp), 0);
         sleep(3);

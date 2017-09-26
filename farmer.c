@@ -17,10 +17,8 @@
 #include <sys/wait.h>
 #include <unistd.h>         // for execlp
 #include <mqueue.h>         // for mq
-#include <stdbool.h>
 #include "settings.h"
 #include "common.h"
-#include "md5s.h"
 
 static long get_curr_msgs(mqd_t *q){
     struct mq_attr  attr;
@@ -31,24 +29,6 @@ static long get_curr_msgs(mqd_t *q){
     }
 
     return (attr.mq_curmsgs);
-}
-
-
-static void
-getattr (mqd_t mq_fd)
-{
-    struct mq_attr      attr;
-    int                 rtnval;
-
-    rtnval = mq_getattr (mq_fd, &attr);
-    if (rtnval == -1)
-    {
-        perror ("mq_getattr() failed");
-        exit (1);
-    }
-    fprintf (stderr, "%d: mqdes=%d max=%ld size=%ld nrof=%ld\n",
-             getpid(),
-             mq_fd, attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
 }
 
 
@@ -99,9 +79,6 @@ int main (int argc, char * argv[])
     attr.mq_msgsize = sizeof(MQ_RESPONSE_MESSAGE);
     mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL | O_NONBLOCK, 0600, &attr);
 
-//    getattr(mq_fd_request);
-//    getattr(mq_fd_response);
-
     pid_t processID = create_workers(NROF_WORKERS);
 
     if (processID < 0) {
@@ -109,17 +86,15 @@ int main (int argc, char * argv[])
         exit (1);
     } else {
 
-        sleep(3);
         int listcounter = 0;
         while (listcounter < MD5_LIST_NROF) {
+
             req.startingChar = 'a' - 1;
             for (int j = 0; j < ALPHABET_NROF_CHAR; ++j) {
                 req.startingChar++;
                 req.md5Request = md5_list[listcounter];
 
-                printf("parent: sending %llx, ", req.md5Request);
-                printf("starting character: %c\n", req.startingChar);
-                if (get_curr_msgs(&mq_fd_request) != 10) {
+                if (get_curr_msgs(&mq_fd_request) < 10) {
                     mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
                 } else {
                     j--;
@@ -127,26 +102,20 @@ int main (int argc, char * argv[])
                     sleep(8);
                     continue;
                 }
-//                sleep(3);
+
             }
             listcounter++;
         }
-
-//        sleep(30);
 
 
         for (int i = 0; i < MD5_LIST_NROF; i++)
         {
             //read the result and store it in the response message
-//            getattr(mq_fd_response);
-//              getattr(mq_fd_response);
-                int nr_msgs = get_curr_msgs(&mq_fd_response);
-            //printf("Ready to receive, queue length: %d\n", nr_msgs);
+            int nr_msgs = get_curr_msgs(&mq_fd_response);
             if (nr_msgs == MD5_LIST_NROF) {
                 for (int j = 0; j < MD5_LIST_NROF; j++)
                 {
                     mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
-//                    sleep(3);
                     printf("%s\n", rsp.decodedString);
                 }
                 break;
@@ -154,10 +123,7 @@ int main (int argc, char * argv[])
                 sleep(5);
                 i--;
             }
-
         }
-
-//        sleep(5);
 
         req.md5Request = 0; //command workers to stop
 
@@ -166,25 +132,12 @@ int main (int argc, char * argv[])
         }
             waitpid(processID, NULL, 0);   // wait for the child
 
-
         mq_close(mq_fd_response);
         mq_close(mq_fd_request);
         mq_unlink(mq_name1);
         mq_unlink(mq_name2);
     }
 
-
-    // TODO:
-    ////  * create the child processes (see process_test() and message_queue_test())
-    //  * do the farming
-    ////  * wait until the chilren have been stopped (see process_test())
-    ////  * clean up the message queues (see message_queue_test())
-    // Add a loop in the farmer to send jobs until all sent
-    // Make sure passed messages make sense.
-    // Add a method for breaking children
-
-    // Important notice: make sure that the names of the message queues contain your
-    // student name and the process id (to ensure uniqueness during testing)
 
     return (0);
 }

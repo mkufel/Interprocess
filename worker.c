@@ -18,30 +18,14 @@
 #include <time.h>
 #include <unistd.h>         // for getpid()
 #include <mqueue.h>         // for mq-stuff
-#include <string.h>
 #include "settings.h"
 #include "common.h"
 #include "md5s.h"
 
 
-static void
-getattr (mqd_t mq_fd)  //not sure if we have to use it
-{
-    struct mq_attr      attr;
-    int                 rtnval;
 
-    rtnval = mq_getattr (mq_fd, &attr);
-    if (rtnval == -1)
-    {
-        perror ("mq_getattr() failed");
-        exit (1);
-    }
-    fprintf (stderr, "%d: mqdes=%d max=%ld size=%ld nrof=%ld\n",
-             getpid(),
-             mq_fd, attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
-}
-
-//Copied from the internet, either write a new one or add a reference
+//Since generation of strings is not the main goal of the assignment we used existing code for generation:
+//https://stackoverflow.com/questions/4764608/generate-all-strings-under-length-n-in-c
 int inc(char *c) {
     if(c[0]==0) return 0;
     if(c[0]=='z'){
@@ -53,7 +37,8 @@ int inc(char *c) {
 }
 
 
-
+//Since generation of strings is not the main goal of the assignment we used existing code for generation:
+//https://stackoverflow.com/questions/4764608/generate-all-strings-under-length-n-in-c
 char * generateStrings(uint128_t expectedHash, char startingChar)
 {
     int n = MAX_MESSAGE_LENGTH-1;
@@ -119,18 +104,12 @@ int main (int argc, char * argv[])
 
     while(true)
     {
-        ssize_t receivedResult;
-//        printf("                                   child: receiving...\n");
-        receivedResult = mq_receive(mq_fd_request, (char *) &req, sizeof(req), NULL);
+        mq_receive(mq_fd_request, (char *) &req, sizeof(req), NULL);
 
         if (req.md5Request == 0)
         {
             break;
         }
-
-//        rsleep(10000);
-        printf("                                   child: received: %llx ", req.md5Request);
-        printf("with a startingChar %c\n", req.startingChar);
 
         char *initialString; // string initially hashed into the md5 value of a request
         initialString = generateStrings(req.md5Request, req.startingChar);
@@ -140,16 +119,13 @@ int main (int argc, char * argv[])
             continue;
         }
 
-        printf("                                   String decoded: %s\n", initialString);
-
-//        rsleep(10000);
         // send the response
         for(int j = 0; j < sizeof(initialString); j++)
         {
             rsp.decodedString[j] = initialString[j];
         }
         rsp.md5Response = req.md5Request;
-        printf("                                   child: sending...\n");
+
         mq_send(mq_fd_response, (char *) &rsp, sizeof(rsp), 0);
         rsleep(10);
     }
@@ -160,17 +136,6 @@ int main (int argc, char * argv[])
     mq_unlink(argv[2]);
 
 
-    // TODO:
-    //// (see message_queue_test() in interprocess_basic.c)
-    ////  * open the two message queues (whose names are provided in the arguments)
-    ////  * repeatingly: (just everything a "true" while)
-    ////      - read from a message queue the new job to do
-    ////     - wait a random amount of time (e.g. rsleep(10000);)
-    ////      - do that job (Generare string, hash them, compare to the result. If same, send a response)
-    ////      - write the results to a message queue
-    ////    until there are no more tasks to do (just a break if -1)
-    ////  * close the message queues
-    
     return (0);
 }
 

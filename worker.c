@@ -52,12 +52,12 @@ char * generateStrings(uint128_t expectedHash, char startingChar)
         do {
             char *string = malloc(sizeof(c)+1);
 
-            string[0] = startingChar;
+            string[0] = startingChar; // First character is startingChar
             for (int k = 1; k < sizeof(string); ++k) {
                 string[k] = c[k-1];
             }
-            uint128_t result = md5s(string, sizeof(string));
-            if (result == expectedHash) {
+            uint128_t result = md5s(string, sizeof(string)); // Hash the generated string
+            if (result == expectedHash) { // Check if there is a match
                 return string;
             }
 
@@ -92,10 +92,10 @@ static void rsleep (int t)
 int main (int argc, char * argv[])
 {
 
-    mqd_t               mq_fd_request;
-    mqd_t               mq_fd_response;
-    MQ_REQUEST_MESSAGE  req;
-    MQ_RESPONSE_MESSAGE rsp;
+    mqd_t               mq_fd_request; // Request queue
+    mqd_t               mq_fd_response; // Response queue
+    MQ_REQUEST_MESSAGE  req; // Request message
+    MQ_RESPONSE_MESSAGE rsp; // Response message
 
     mq_fd_request = mq_open(argv[1], O_RDONLY);
     mq_fd_response = mq_open(argv[2], O_WRONLY);
@@ -112,14 +112,16 @@ int main (int argc, char * argv[])
         }
 
         char *initialString; // string initially hashed into the md5 value of a request
+        // Generate the strings starting with startingChar and compare the hash to md5Request
         initialString = generateStrings(req.md5Request, req.startingChar);
 
+        // If no match is found, continue and go to next request
         if (initialString == NULL)
         {
             continue;
         }
 
-        // send the response
+        // Send the response
         for(int j = 0; j < sizeof(initialString); j++)
         {
             rsp.decodedString[j] = initialString[j];
@@ -130,10 +132,10 @@ int main (int argc, char * argv[])
         rsleep(10);
     }
 
-    mq_close (mq_fd_response);
-    mq_close (mq_fd_request);
-    mq_unlink(argv[1]);
-    mq_unlink(argv[2]);
+    mq_close (mq_fd_response); // Close response queue
+    mq_close (mq_fd_request); // Close request queue
+    mq_unlink(argv[1]); // Remove request queue
+    mq_unlink(argv[2]); // Remove response queue
 
 
     return (0);

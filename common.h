@@ -17,23 +17,22 @@
 #define MAX_MESSAGE_LENGTH	6
  
 
-// TODO: put your definitions of the datastructures here
 // two message queues
 static char    mq_name1[80];
 static char    mq_name2[80];
 
 typedef struct
 {
-    // a data structure with 2 members
-    uint128_t md5Request;
-    char startingChar;
+    // Request message data structure
+    uint128_t md5Request; // Hash value
+    char startingChar; // Starting character
 } MQ_REQUEST_MESSAGE;
 
 typedef struct
 {
-    // a data structure with 2 members
-    char      decodedString[MAX_MESSAGE_LENGTH];
-    uint128_t md5Response;
+    // Response message data structure
+    char      decodedString[MAX_MESSAGE_LENGTH]; // String corresponding to hash value
+    uint128_t md5Response; // Hash value, same as md5Request
 } MQ_RESPONSE_MESSAGE;
 
 #endif

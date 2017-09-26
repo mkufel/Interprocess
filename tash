@@ -1,0 +1,140 @@
+[33mcommit 5bd1adea6f1b9ae28dc2e0aa2ce6281513f02251[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Sun Sep 24 15:53:00 2017 +0200
+
+    Working final version
+
+[33mcommit b52dd313c2a51b9586d511f74e1542c33113bb0f[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Sun Sep 24 11:54:44 2017 +0200
+
+    first draft of the final version
+
+[33mcommit 3ec0aac91beb0038ba937dc256436483e299bacb[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Sat Sep 23 14:11:21 2017 +0200
+
+    Sending back and forth, decoding work. TODO: wait for the slow workers(parent receives the last message 3 times for some reason), Split into n number of jobs(currently only into NROFWORKERS number of jobs)
+
+[33mcommit 9dc81f795fe179fa3ebfe59a76790e1b3c44bd4b[m
+Merge: 4c16a47 d3f9754
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Sat Sep 23 10:36:36 2017 +0200
+
+    merge conflicts
+
+[33mcommit d3f9754d47a78c38e9cfd11244486b8e18281623[m
+Author: Ahmed Ahres <ahmedahres98@gmail.com>
+Date:   Fri Sep 22 16:01:53 2017 +0200
+
+    fixed algorithm to find match
+
+[33mcommit 4c16a4730527df37bb09eac8a8ccf7fdb55124da[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Thu Sep 21 10:19:49 2017 +0200
+
+    TODO continued
+
+[33mcommit 6c2fce3fb1a7ab97aa09f9756596dd6d733f76db[m
+Author: Ahmed Ahres <ahmedahres98@gmail.com>
+Date:   Thu Sep 21 10:06:56 2017 +0200
+
+    message
+
+[33mcommit 188dfa4a0a39effa2965cd8db1e7205a57d64532[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Thu Sep 21 09:01:15 2017 +0200
+
+    Updated the TODO
+
+[33mcommit f4168b5684e13827d38f10267b22e57ef49e9613[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Tue Sep 19 17:08:23 2017 +0200
+
+    fixed printing of the starting point
+
+[33mcommit ff068d3b205c26b48b347d2143901b692c4e4627[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Tue Sep 19 16:57:49 2017 +0200
+
+    md5 values passing
+
+[33mcommit 5c184edff92168c518bfc24d1648e2252df16690[m
+Author: Ahmed Ahres <ahmedahres98@gmail.com>
+Date:   Tue Sep 19 16:40:28 2017 +0200
+
+    md5s algorithm fixed
+
+[33mcommit 3bc30444e2de8bd920477f5f7d5c27ad9dcb1363[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Tue Sep 19 15:50:27 2017 +0200
+
+    Revert "broken worker"
+    
+    This reverts commit 67e4d60da0c8f50890f64f2ae9b790116311c295.
+
+[33mcommit 67e4d60da0c8f50890f64f2ae9b790116311c295[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Tue Sep 19 15:36:06 2017 +0200
+
+    broken worker
+
+[33mcommit 05e5e9859c5ca53fcef6c770a2cac4f058bd48e3[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Tue Sep 19 12:23:52 2017 +0200
+
+    fixed communication between children and a parent
+
+[33mcommit e6b53dde8f3a00bae13943ea428349ad7b21c802[m
+Author: Ahmed Ahres <ahmedahres98@gmail.com>
+Date:   Tue Sep 19 12:05:08 2017 +0200
+
+    communication
+
+[33mcommit 07357ea11788127d9e38b231ac0b4a2dd0768efc[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Tue Sep 19 11:32:01 2017 +0200
+
+    queue names
+
+[33mcommit 495b885276496123711acffc5e4397db82dbd84b[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Tue Sep 19 11:16:47 2017 +0200
+
+    Fixed mqs names
+
+[33mcommit b7592b4d0b1d87181d0da6ea4d112b817b87c10b[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Tue Sep 19 10:57:28 2017 +0200
+
+    worker updated + farmer shit
+
+[33mcommit 0d6409df90c6a8e17cfdc0a4270414ef4dffe888[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Sun Sep 17 00:10:12 2017 +0200
+
+    Fixed creating children from 1 parent process
+
+[33mcommit 9bfa781e7e4b09e4b03ae6b68f1dbc5c092be191[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Fri Sep 15 10:33:34 2017 +0200
+
+    Loop in the farmer
+
+[33mcommit cd1a28c5da0d7ce133b69f34befe9b4e9ac9455b[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Fri Sep 15 09:56:39 2017 +0200
+
+    creating children initial v
+
+[33mcommit 36f6cd1e74479ae5c5b519a68cad50ff2eed5e2b[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Fri Sep 15 08:46:12 2017 +0200
+
+    Initial changes in farmer
+
+[33mcommit 1942f837a2ed0ff9c66a663a095426629fc07823[m
+Author: Maciej Kufel <kufcio97@gmail.com>
+Date:   Thu Sep 14 14:05:56 2017 +0200
+
+    First commit

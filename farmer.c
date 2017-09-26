@@ -117,15 +117,17 @@ int main (int argc, char * argv[])
                 req.startingChar++;
                 req.md5Request = md5_list[listcounter];
 
-//                printf("parent: sending %llx, ", req.md5Request);
-//                printf("starting character: %c\n", req.startingChar);
+                printf("parent: sending %llx, ", req.md5Request);
+                printf("starting character: %c\n", req.startingChar);
                 if (get_curr_msgs(&mq_fd_request) != 10) {
                     mq_send(mq_fd_request, (char *) &req, sizeof(req), 0);
                 } else {
                     j--;
-                    sleep(3);
+                    req.startingChar--;
+                    sleep(8);
+                    continue;
                 }
-                sleep(3);
+//                sleep(3);
             }
             listcounter++;
         }
@@ -144,7 +146,7 @@ int main (int argc, char * argv[])
                 for (int j = 0; j < MD5_LIST_NROF; j++)
                 {
                     mq_receive(mq_fd_response, (char *) &rsp, sizeof(rsp), NULL);
-                    sleep(3);
+//                    sleep(3);
                     printf("%s\n", rsp.decodedString);
                 }
                 break;
@@ -155,7 +157,7 @@ int main (int argc, char * argv[])
 
         }
 
-        sleep(5);
+//        sleep(5);
 
         req.md5Request = 0; //command workers to stop
 
